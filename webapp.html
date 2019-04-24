@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+	<meta charset="UTF-8">
+	<title>Smart Soil Sensor</title>
+	<link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-grey-light">
+	<div class="flex justify-center py-10 text-black font-bold text-2xl">
+	Welcome to the Smart Soil Sensor
+	</div>
+	<div class="flex bg-grey m-auto w-3/4 border-black rounded border-2">
+			<div class="flex-1 text-black text-center font-semibold bg-grey-light rounded-sm px-4 py-2 m-2">LIGHT LEVEL
+			<div id="Light" class="text-green-dark text-center text-5xl font-bold py-5 m-auto">Good</div>
+			<button type="button" class="bg-grey-dark text-center px-4 py-2 rounded-lg" onclick="incValue('Light');">Test</button>
+			<button id="lightButton" type="button" class="bg-grey-dark text-center px-4 py-2 rounded-lg" onclick="toggleDetails('lightDetails');">Show Details</button>
+		</div>
+		<div class="flex-1 text-black text-center font-semibold bg-grey-light rounded-sm px-4 py-2 m-2">MOISTURE
+			<div id="Moisture" class="text-green-dark text-center text-5xl font-bold py-5 m-auto">Good</div>
+			<button type="button" class="bg-grey-dark text-center px-4 py-2 rounded-lg" onclick="incValue('Moisture');">Test</button>
+			<button id="moistureButton" type="button" class="bg-grey-dark text-center px-4 py-2 rounded-lg" onclick="toggleDetails('moistureDetails');">Show Details</button>
+		</div>
+		<div class="flex-1 text-black text-center font-semibold bg-grey-light rounded-sm px-4 py-2 m-2">TEMPERATURE
+			<div id="Temp" class="text-green-dark text-center text-5xl font-bold py-5 m-auto">Good</div>
+			<button type="button" class="bg-grey-dark text-center px-4 py-2 rounded-lg" onclick="incValue('Temp');">Test</button>
+			<button id="tempButton" type="button" class="bg-grey-dark text-center px-4 py-2 rounded-lg" onclick="toggleDetails('tempDetails');">Show Details</button>
+		</div>
+	</div>
+	<div id="lightDetails" class="none bg-grey m-auto mt-2 w-1/2 py-2 px-2 rounded border-2 border-black">
+		<p>LIGHT</p>
+		<iframe class="mr-auto ml-auto" width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/763838/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+	</div>
+	<div id="moistureDetails" class="none bg-grey m-auto mt-2 w-1/2 py-2 px-2 rounded border-2 border-black">
+		<p>MOISTURE</p>
+		<iframe class="mr-auto ml-auto" width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/763838/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+	</div>
+	<div id="tempDetails" class="none bg-grey m-auto mt-2 w-1/2 py-2 px-2 rounded border-2 border-black">
+		<p>TEMP</p>
+		<iframe class="mr-auto ml-auto" width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/763838/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+	</div>
+	<!--<div class="flex mt-4 ml-auto mr-auto w-1/2 py-5 justify-center border-2 border-black rounded">
+		<div class="text-black text-3xl text-center font-semibold">Choose Your Plant</div>
+		<div class="dropdown">
+			<button onclick="expand()" class="dropbtn">Select Plant</button>
+			<div id="plantList" class="dropdown-content">
+
+	</div>
+	-->
+	<script>
+		//id is the name of the text div
+		//n is 0, 1, 2
+		//0 for too low, 1 for goo, 2 for too high
+		function updateText(id, n){
+			var e = document.getElementById(id);
+			switch(n){
+				case 0:
+					e.style.color = "#2779BD"
+					e.innerHTML = "Too Low";
+					break;
+				case 1:
+					e.style.color = "#1F9D55";
+					e.innerHTML = "Good";
+					break;
+				case 2:
+					e.style.color = "#CC1F1A";
+					e.innerHTML = "Too High";
+			}
+			return;
+		}
+
+		function incValue(id){
+			var e = document.getElementById(id).innerHTML;
+			var n = 0;
+			switch(e){
+				case 'Too Low':
+					n = 1;
+					break;
+				case 'Good':
+					n = 2;
+					break;
+			}
+			updateText(id,n);
+		}
+
+		function requestData(){
+			console.log("Requesting Data");
+			return;
+		}
+
+		function toggleDetails(detailID){
+			var dm = document.getElementById('moistureDetails');
+			var dl = document.getElementById('lightDetails');
+			var dt = document.getElementById('tempDetails');
+			var bm = document.getElementById('moistureButton');
+			var bl = document.getElementById('lightButton');
+			var bt = document.getElementById('tempButton');
+			if(detailID == 'tempDetails'){
+				if(bt.innerHTML == 'Hide Details'){
+					dt.style.display = 'none';
+					bt.innerHTML = 'Show Details';
+				} else {
+					dt.style.display = 'flex';
+					dl.style.display = 'none';
+					bl.innerHTML = 'Show Details';
+					dm.style.display = 'none';
+					bm.innerHTML = 'Show Details';
+					bt.innerHTML = 'Hide Details';
+				}
+			} else if(detailID == 'lightDetails'){
+				if(bl.innerHTML == 'Hide Details'){
+					dl.style.display = 'none';
+					bl.innerHTML = 'Show Details';
+				} else {
+					dl.style.display = 'flex';
+					dm.style.display = 'none';
+					bm.innerHTML = 'Show Details';
+					dt.style.display = 'none';
+					bt.innerHTML = 'Show Details';
+					bl.innerHTML = 'Hide Details';
+				}
+			} else if(detailID == 'moistureDetails'){
+				if(bm.innerHTML == 'Hide Details'){
+					dm.style.display = 'none';
+					bm.innerHTML = 'Show Details';
+				} else {
+					dm.style.display = 'flex';
+					dl.style.display = 'none';
+					bl.innerHTML = 'Show Details';
+					dt.style.display = 'none';
+					bt.innerHTML = 'Show Details';
+					bm.innerHTML = 'Hide Details';
+				}
+			}
+
+
+			return;
+		}
+
+		updateText("Light", 1);
+		updateText("Moisture", 0);
+		updateText("Temp", 2);
+
+		document.getElementById('moistureDetails').style.display = 'none';
+		document.getElementById('lightDetails').style.display = 'none';
+		document.getElementById('tempDetails').style.display = 'none';
+
+
+		var qs = require('querystring');
+
+		/**function (request, response) {
+    		if (request.method == 'POST') {
+	        var body = '';
+	        request.on('data', function (data) {
+	            body += data;
+	            // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+	            if (body.length > 1e6) { 
+	                // FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
+	                request.connection.destroy();
+	            }
+	        });
+	        request.on('end', function () {
+
+            var POST = qs.parse(body);
+            // use POST
+
+        	});
+    		}
+		}
+		*/
+	</script>
+</body>
